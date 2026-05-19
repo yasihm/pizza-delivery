@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, Column, String, Integer, Boolean, Float, ForeignKey 
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import ChoiceType
 
 
@@ -41,12 +41,20 @@ class Pedido (Base):
     usuario = Column("usuario", ForeignKey("usuarios.id"))
     preco = Column("preco", Float)
 
-    #itens = 
+    itens = relationship("ItemPedido", cascade="all, delete")
 
     def __init__(self, usuario, status="PENDENTE", preco=0):
         self.usuario = usuario
         self.preco = preco 
         self.status = status
+
+    def calcular_preco(self):
+        # percorrrer todos os itens do pedido
+         # somar todos os preços de itens dos pedidos
+        # editar no campo "preço" o valor final do preçõ do pedido
+        preco_pedido = 0
+        self.preco = sum(item.preco_unitario * item.quantidade for item in self.itens)
+       
 
 # ItensPedidos
 class ItemPedido(Base):
@@ -68,3 +76,10 @@ class ItemPedido(Base):
 
 # executa a criação dos metadados do seu banco de dados (cria efetivamente o banco de dados)
 
+
+# migrar o banco de dados
+
+# criar a migração: alembic revision --autogenerate -m "Alterar repr Pedidos"
+
+
+# executar a migração: alembic upgrade head
