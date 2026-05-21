@@ -5,7 +5,7 @@ banco.db
 .venv/
 __pycache__/
 *.pyc
-alembic/versions/
+#alembic/versions/
 __pycache__/
 *.pyc__pycache__/
 *.pyc
