@@ -1,27 +1,26 @@
 from fastapi import Depends, HTTPException
-from security import SECRET_KEY, ALGORITHM, oauth2_schema
-from models import db
-from sqlalchemy.orm import sessionmaker, Session
+from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from jose import jwt
+from database import get_db
 from models import Usuario
-from jose import jwt, JWTError
+from security import SECRET_KEY, ALGORITHM
 
-SessionLocal = sessionmaker(bind=db)
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="/auth/login-form")
 
-def pegar_sessao():
-    session = SessionLocal()
-    try:
+async def pegar_sessao() -> AsyncSession:
+    async for session in get_db():
         yield session
-    finally:
-        session.close()
 
-def verificar_token(token: str = Depends(oauth2_schema), session: Session = Depends(pegar_sessao)):
+async def verificar_token(token: str = Depends(oauth2_schema), db: AsyncSession = Depends(pegar_sessao)):
     try:
         dic_info = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id_usuario = int(dic_info.get("sub"))
-    except JWTError as erro:
-        print(erro)
-        raise HTTPException(status_code=401, detail="Acesso Negado, verifique a validade do token.")
-    usuario = session.query(Usuario).filter(Usuario.id == id_usuario).first()
-    if not usuario:
-        raise HTTPException(status_code=401, detail="Acesso Inválido")
-    return usuario
+        result = await db.execute(select(Usuario).where(Usuario.id == id_usuario))
+        usuario = result.scalar_one_or_none()
+        if not usuario:
+            raise HTTPException(status_code=401, detail="Usuário não encontrado")
+        return usuario
+    except Exception:
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")

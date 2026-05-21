@@ -1,17 +1,18 @@
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, String, Integer, Boolean, Float, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import ChoiceType
+from database import Base  # ← importa de database
 
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL não configurada no ambiente")
+    raise ValueError("DATABASE_URL não configurada")
 
+# Engine síncrono para uso em scripts (Alembic, etc.)
 db = create_engine(DATABASE_URL)
-Base = declarative_base()
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -68,13 +69,3 @@ class ItemPedido(Base):
         self.tamanho = tamanho
         self.preco_unitario = preco_unitario
         self.pedido = pedido
-
-# executa a criação dos metadados do seu banco de dados (cria efetivamente o banco de dados)
-
-
-# migrar o banco de dados
-
-# criar a migração: alembic revision --autogenerate -m "Alterar repr Pedidos"
-
-
-# executar a migração: alembic upgrade head
