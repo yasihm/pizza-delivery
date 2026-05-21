@@ -6,3 +6,8 @@ banco.db
 __pycache__/
 *.pyc
 alembic/versions/
+__pycache__/
+*.pyc__pycache__/
+*.pyc
+*.db
+*.sqlite
