@@ -48,3 +48,13 @@ class ResponsePedidoSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class PizzaSchema(BaseModel):
+    nome : str
+    preco : float
+    descricao: Optional[str] = ""
+    imagem : Optional[str] = ""
+    disponivel: Optional[bool] = True
+    
+    class Config:
+        from_attributes = True
