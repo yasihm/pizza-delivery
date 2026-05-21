@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, String, Integer, Boolean, Float, F
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import ChoiceType
 
-db = create_engine("sqlite:///banco.db")
+db = create_engine("postgresql://postgres:pgdbyas7198@db.fsuupehakctjilzokssc.supabase.co:5432/postgres")
 Base = declarative_base()
 
 class Usuario(Base):
