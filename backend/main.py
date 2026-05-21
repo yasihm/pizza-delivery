@@ -5,7 +5,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",           # desenvolvimento local
+        "https://pizza-delivery-frontend.vercel.app"  # produção
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
